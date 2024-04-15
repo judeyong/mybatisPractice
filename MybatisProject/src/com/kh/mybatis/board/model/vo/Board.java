@@ -1,6 +1,7 @@
 package com.kh.mybatis.board.model.vo;
 
 import java.sql.Date;
+import java.util.List;
 
 public class Board {
 	private int boardNo;
@@ -10,7 +11,16 @@ public class Board {
 	private int count;
 	private Date createDate;
 	private String status;
+	private List<Reply> replyList;
 	
+	public List<Reply> getReplyList() {
+		return replyList;
+	}
+
+	public void setReplyList(List<Reply> replyList) {
+		this.replyList = replyList;
+	}
+
 	public Board() {
 		super();
 	}
@@ -87,7 +97,7 @@ public class Board {
 	public String toString() {
 		return "Board [boardNo=" + boardNo + ", boardTitle=" + boardTitle + ", boardContent=" + boardContent
 				+ ", boardWriter=" + boardWriter + ", count=" + count + ", createDate=" + createDate + ", status="
-				+ status + "]";
+				+ status + "]" + "댓글 목록 : " + replyList;
 	}
 	
 }

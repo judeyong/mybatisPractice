@@ -78,12 +78,22 @@ border : 1px solid white;
                         <option value="content">내용</option>
                         <option value="title">제목</option>
                     </select>
-                    <input type="text" class="form-control" name="keyword" value="">
+                    <input type="text" class="form-control" name="keyword" value="${ requestScope.keyword }">
                     <button type="submit" class="btn btn-secondary">검색</button>
                 </div>
 			</form>
 		</div>
 		
+		
+		 
+		<c:if test="${ not empty condition }" >
+			<script>
+				$(function(){
+					$('#search-area option[value=${condition}]').attr('selected', true);
+				});
+			</script>
+			
+		</c:if>
 		
 		<br>
 		
@@ -98,15 +108,15 @@ border : 1px solid white;
 				</tr>
 			</thead>
 			<tbody>
-					<c:forEach var="board" items="${ requestScope.boardList }">
-						<tr>
-							<td>${ board.boardNo }</td>
-							<td>${ board.boardTitle }</td>
-							<td>${ board.boardWriter }</td>
-							<td>${ board.count }</td>
-							<td>${ board.createDate }</td>
-						</tr>
-					</c:forEach>
+				<c:forEach var="board" items="${ requestScope.boardList }">
+					<tr>
+						<td>${ board.boardNo }</td>
+						<td><a href="detail.board?boardNo=${ board.boardNo }">${ board.boardTitle }</a></td>
+						<td>${ board.boardWriter }</td>
+						<td>${ board.count }</td>
+						<td>${ board.createDate }</td>
+					</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 		
@@ -115,9 +125,20 @@ border : 1px solid white;
 		<div id="paging-area">
 			<c:forEach var="p" begin="${ requestScope.pageInfo.startPage }"
 						end="${ requestScope.pageInfo.endPage }">
-				<a
-				  class="btn btn-outline-danger"
-				  href="list.board?page=${ p }">${ p }</a>
+				<c:choose>
+					<c:when test="${ empty condition}">		
+						<a
+				  		class="btn btn-outline-danger"
+				  		href="list.board?page=${ p }">${ p }</a>
+				  </c:when>
+				  
+				  <c:otherwise>
+				  		<a
+				  		class="btn btn-outline-danger"
+				  		href="search.do?page=${ p }&condition=${ condition }&keyword=${ keyword }">${ p }</a>	
+				  </c:otherwise>
+				</c:choose>
+				
 			</c:forEach>
 		</div>
 

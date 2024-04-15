@@ -10,7 +10,61 @@
 		<result column="USER_NAME" property="boardWriter" />
 		<result column="COUNT" property="count" />
 		<result column="CREATE_DATE" property="createDate" />
+		<result column="BOARD_CONTENT" property="boardContent" />
 	</resultMap>
+	
+	<resultMap id="replyResultSet" type="com.kh.mybatis.board.model.vo.Reply">
+		<result column="REPLY_NO" property="replyNo" />
+		<result column="REPLY_CONTENT" property="replyContent" />
+		<result column="USER_NAME" property="replyWriter" />
+		<result column="CREATE_DATE" property="createDate" />
+	</resultMap>
+	
+	<resultMap id="boardAndReplyMap" type="board">
+		<result column="BOARD_NO" property="boardNo" />
+		<result column="BOARD_TITLE" property="boardTitle" />
+		<result column="BOARD_NAME" property="boardWriter" />
+		<result column="COUNT" property="count" />
+		<result column="BOARD_DATE" property="createDate" />
+		<collection property="replyList" resultMap="replyListMap" />
+	</resultMap>
+	
+	<resultMap id="replyListMap" type="com.kh.mybatis.board.model.vo.Reply" >
+		<result column="REPLY_CONTENT" property="replyContent" />
+		<result column="REPLY_NAME" property="replyWriter" />
+		<result column="REPLY_DATE" property="createDate" /> 
+	</resultMap>
+	
+	<select id="boardAndReply" 
+			parameterType="_int"
+			resultMap="boardAndReplyMap"
+	>
+		SELECT
+	      BOARD_NO,
+	      BOARD_TITLE,
+	      E.USER_NAME BOARD_NAME,
+	      COUNT,
+	      BOARD.CREATE_DATE BOARD_DATE,
+	      BOARD.BOARD_CONTENT,
+          REPLY_CONTENT,
+          M.USER_NAME REPLY_NAME,
+          REPLY.CREATE_DATE REPLY_DATE
+	 FROM
+	 	  BOARD
+	 JOIN	  
+	      MEMBER E ON(BOARD_WRITER = USER_NO)
+     LEFT     
+     JOIN
+          REPLY ON (BOARD_NO = REF_BNO)
+     LEFT     
+     JOIN
+          MEMBER M ON (M.USER_NO = REPLY_WRITER)
+	WHERE
+	      BOARD_NO = #{boardNo}
+    ORDER
+       BY
+         REPLY_NO DESC
+	</select>
 	
 	<select id="selectListCount" resultType="_int">
 		SELECT
@@ -90,11 +144,58 @@
 		      BOARD_NO DESC
 	</select>
 
+	<update id="increaseCount" parameterType="_int">
+		UPDATE
+		       BOARD
+		   SET
+		       COUNT = COUNT + 1
+		 WHERE
+		       BOARD_NO = #{boardNo}
+		   AND
+		       STATUS = 'Y'          
+	</update>
+	
+	<select id="findById"
+			parameterType="_int"
+			resultMap="boardResultSet"
+	>
+	SELECT
+	      BOARD_NO,
+	      BOARD_TITLE,
+	      USER_NAME,
+	      COUNT,
+	      CREATE_DATE,
+	      BOARD_CONTENT
+	 FROM
+	 	  BOARD
+	 JOIN	  
+	      MEMBER ON(BOARD_WRITER = USER_NO)
+	WHERE
+	      BOARD_NO = #{boardNo}   
+	          
+	</select>
+	
+	<select id="selectReplyList"
+		parameterType="_int"
+		resultMap="replyResultSet"
+	>
+		SELECT
+		      REPLY_NO,
+		      USER_NAME,
+		      REPLY_CONTENT,
+		      CREATE_DATE
+		  FROM
+		      REPLY
+		  JOIN
+		      MEMBER ON(REPLY_WRITER = USER_NO)
+		 WHERE
+		      REF_BNO = #{boardNo}     
+		  ORDER
+		     BY
+		       REPLY_NO DESC               
+	</select>
 
-
-
-
-
+	
 
 
 

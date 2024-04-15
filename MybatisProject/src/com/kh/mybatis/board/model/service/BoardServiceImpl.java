@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import com.kh.mybatis.board.model.dao.BoardDao;
 import com.kh.mybatis.board.model.vo.Board;
+import com.kh.mybatis.board.model.vo.Reply;
 import com.kh.mybatis.common.model.vo.PageInfo;
 import com.kh.mybatis.common.template.Template;
 
@@ -63,6 +64,59 @@ public class BoardServiceImpl implements BoardService {
 		
 		return searchList;
 	}
+	
+	public int increaseCount(int boardNo) {
+		SqlSession sqlSession = Template.getSqlSession();
+		
+		int result = boardDao.increaseCount(sqlSession, boardNo);
+		
+		if(result > 0) sqlSession.commit();
+			
+		sqlSession.close();
+		
+		return result;
+	}
+	
+	public Board findById(int boardNo) {
+		
+		SqlSession sqlSession = Template.getSqlSession();
+		
+		Board board = boardDao.findById(sqlSession, boardNo);
+		
+		sqlSession.close();
+		
+		return board;
+	}
+	
+	public List<Reply> selectReplyList(int boardNo){
+		SqlSession sqlSession = Template.getSqlSession();
+		
+		List<Reply> replyList = boardDao.selectReplyList(sqlSession, boardNo);
+		
+		sqlSession.close();
+		
+		return replyList;
+	}
+	
+	public Board boardAndReply(int boardNo) {
+		SqlSession sqlSession = Template.getSqlSession();
+		
+		Board board = boardDao.boardAndReply(sqlSession, boardNo);
+		
+		sqlSession.close();
+		
+		return board;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
